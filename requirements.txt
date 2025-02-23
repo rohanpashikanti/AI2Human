@@ -1,0 +1,6 @@
+Flask
+requests
+spacy
+nltk
+language_tool_python
+gunicorn
