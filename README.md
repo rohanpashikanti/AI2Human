@@ -20,10 +20,11 @@
 ```bash
 git clone https://github.com/rohanpashikanti/AI2Human.git
 cd AI2Human
-
+```
 ### **2️⃣ Run the Application
+```
 python app.py
-
+```
 Now, open your browser and visit:
 🔗 http://127.0.0.1:5000
 
