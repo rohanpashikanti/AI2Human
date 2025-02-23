@@ -2,7 +2,6 @@ import ssl
 import re
 import random
 import requests
-import spacy
 import nltk
 import language_tool_python
 from flask import Flask, request, jsonify, render_template_string
@@ -23,7 +22,17 @@ nltk.download('wordnet')
 nltk.download('omw-1.4')
 
 # --- Load spaCy Model ---
-nlp = spacy.load('en_core_web_sm')
+import os
+import spacy
+
+# Check if spaCy model is available, otherwise download it
+spacy_model = "en_core_web_sm"
+if not os.path.exists(spacy.util.get_data_path() / spacy_model):
+    print(f"Downloading spaCy model: {spacy_model}...")
+    spacy.cli.download(spacy_model)
+
+nlp = spacy.load(spacy_model)
+
 
 # --- Hugging Face API Key ---
 API_KEY = "YOUR_HUGGING_FACE_API_KEY"  # Replace with your actual key
