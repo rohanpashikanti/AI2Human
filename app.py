@@ -158,7 +158,6 @@ def apply_mode_formatting(text: str, mode: str) -> str:
     return text
 
 def get_detection_scores(text: str) -> dict:
-    # In a production system, you'd integrate with actual APIs.
     return {
         "GPTZero": 14.0,
         "Originality.AI": 19.0,
@@ -179,7 +178,6 @@ def humanize_pipeline(original_text: str, mode: str) -> dict:
     mode_text = apply_mode_formatting(final_text, mode)
     detection_scores = get_detection_scores(mode_text)
     
-    # Return only the final output and detection scores
     return {
         "humanized_text": mode_text,
         "detection_scores": detection_scores
@@ -188,14 +186,15 @@ def humanize_pipeline(original_text: str, mode: str) -> dict:
 # --- Flask App Initialization ---
 app = Flask(__name__)
 
-# --- HTML Template using Samsung AI Color Palette and Updated Features ---
+# --- HTML Template with Favicon, Updated Title, AI Icon, and Footer Branding ---
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Text Humanizer</title>
+  <title>AI2HUMAN | Project by Rohan Pashilkanti</title>
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3081/3081934.png" type="image/png" />
   <style>
     /* Global reset & Samsung AI inspired color palette */
     * {
@@ -209,6 +208,7 @@ HTML_TEMPLATE = """
       background: linear-gradient(135deg, #E0F7FA, #FFFFFF);
       padding: 2rem;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       animation: fadeInPage 0.8s ease-in-out;
@@ -222,11 +222,20 @@ HTML_TEMPLATE = """
       width: 100%;
       margin: 0 auto;
     }
-    h1 {
+    header {
       text-align: center;
-      color: #1428A0;
-      margin-bottom: 1rem;
+      margin-bottom: 2rem;
+    }
+    header h1 {
       font-size: 2.5rem;
+      color: #1428A0;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    header h1 img {
+      width: 40px;
+      height: 40px;
     }
     .subtitle {
       text-align: center;
@@ -357,6 +366,17 @@ HTML_TEMPLATE = """
       margin-bottom: 0.25rem;
       color: #333;
     }
+    footer {
+      text-align: center;
+      bottom: 5px;
+      font-size: 0.9rem;
+      color: #555;
+    }
+    footer a {
+      color: #0D47A1;
+      text-decoration: none;
+      font-weight: 500;
+    }
     @media (max-width: 768px) {
       .editor-container {
         flex-direction: column;
@@ -366,10 +386,15 @@ HTML_TEMPLATE = """
 </head>
 <body>
   <div class="container">
-    <h1>Convert AI Text To Human With Our AI Humanizer</h1>
-    <p class="subtitle">
-      Instantly humanize AI text with our powerful converter. Achieve a 90% human score without fail!
-    </p>
+    <header>
+      <h1>
+        <img src="https://cdn-icons-png.flaticon.com/512/3081/3081934.png" alt="AI Icon" />
+        Convert AI Text To Human With Our AI Humanizer
+      </h1>
+      <p class="subtitle">
+        Instantly humanize AI text with our powerful converter. Achieve a 90% human score without fail!
+      </p>
+    </header>
     <div class="editor-container">
       <!-- Input Section -->
       <div class="editor-section">
@@ -405,6 +430,9 @@ HTML_TEMPLATE = """
         <button id="copy-btn" class="copy-button">Copy Output</button>
       </div>
     </div>
+    <footer>
+      Project by <a href="https://rohanpashikanti.vercel.app/" target="_blank">Rohan Pashilkanti</a>
+    </footer>
   </div>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -422,7 +450,7 @@ HTML_TEMPLATE = """
         const humanizeBtn = document.createElement('button');
         humanizeBtn.id = "humanize-btn";
         humanizeBtn.className = "humanize-button";
-        humanizeBtn.textContent = "✨ Humanize";
+        humanizeBtn.textContent = "Humanize";
         inputText.parentElement.parentElement.appendChild(humanizeBtn);
       }
       const humanizeButton = document.getElementById('humanize-btn');
@@ -463,13 +491,12 @@ HTML_TEMPLATE = """
           });
           if (!response.ok) throw new Error("Error humanizing text");
           const result = await response.json();
-          // Directly set the output text
           outputText.value = result.humanized_text || "No output received.";
           updateOutputWordCount();
           updateDetectionScores(result.detection_scores);
         } catch (err) {
           console.error(err);
-          alert("There was an error processing your request.");
+          print("There was an error processing your request.");
         }
         humanizeButton.textContent = "Humanize";
         humanizeButton.disabled = false;
