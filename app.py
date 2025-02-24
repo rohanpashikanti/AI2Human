@@ -32,9 +32,6 @@ headers = {"Authorization": f"Bearer {API_KEY}"}
 # --- NLP Functions ---
 
 def paraphrase_text(text: str) -> str:
-    """
-    Paraphrase text using a Hugging Face model (e.g., tuner007/pegasus_paraphrase).
-    """
     url = "https://api-inference.huggingface.co/models/tuner007/pegasus_paraphrase"
     payload = {
         "inputs": text,
@@ -45,13 +42,9 @@ def paraphrase_text(text: str) -> str:
         data = response.json()
         if data:
             return data[0]['generated_text'].strip()
-    # Fallback: simple cleaning
     return re.sub(r"[^\w\s]", "", text)
 
 def style_transfer_text(text: str) -> str:
-    """
-    Convert the paraphrased text into a friendly, human-like tone using GPT-2.
-    """
     url = "https://api-inference.huggingface.co/models/gpt2"
     prompt = f"Rewrite the following text in a human-like, friendly tone. Text: {text}\n\nRewritten text:"
     payload = {
@@ -69,9 +62,6 @@ def style_transfer_text(text: str) -> str:
     return text
 
 def lexical_syntax_modification(text: str) -> str:
-    """
-    Enhance text by replacing verbs, adjectives, and adverbs with synonyms using WordNet.
-    """
     doc = nlp(text)
     modified_tokens = []
     for token in doc:
@@ -91,9 +81,6 @@ def lexical_syntax_modification(text: str) -> str:
     return ' '.join(modified_tokens)
 
 def sentence_variation_fluency(text: str) -> str:
-    """
-    Enhance readability by splitting long sentences and merging very short ones.
-    """
     doc = nlp(text)
     enhanced_sentences = []
     for sent in doc.sents:
@@ -111,9 +98,6 @@ def sentence_variation_fluency(text: str) -> str:
     return ' '.join(enhanced_sentences).replace(' .', '.')
 
 def sentiment_emotion_enhancement(text: str) -> str:
-    """
-    Detect sentiment using VADER; if neutral, prepend expressive phrases to each sentence.
-    """
     sia = SentimentIntensityAnalyzer()
     scores = sia.polarity_scores(text)
     if -0.05 < scores['compound'] < 0.05:
@@ -127,9 +111,6 @@ def sentiment_emotion_enhancement(text: str) -> str:
     return text
 
 def optimize_text(text: str) -> str:
-    """
-    Apply final tweaks: adjust contractions, punctuation, and sentence rhythm.
-    """
     optimized = text.replace(" do not ", " don't ")
     optimized = re.sub(r"\s+", " ", optimized)
     sentences = optimized.split(". ")
@@ -143,9 +124,6 @@ def optimize_text(text: str) -> str:
     return ". ".join(optimized_sentences)
 
 def correct_text(text: str) -> str:
-    """
-    Use LanguageTool to correct spelling mistakes and punctuation.
-    """
     try:
         tool = language_tool_python.LanguageTool('en-US')
         corrected_text = tool.correct(text)
@@ -155,23 +133,6 @@ def correct_text(text: str) -> str:
         return text
 
 def apply_mode_formatting(text: str, mode: str) -> str:
-    """
-    Adjust the final text based on the selected mode using GPT-2.
-    
-    Modes:
-    - Balanced:
-        Tone: Friendly and accessible without being overly casual.
-        Style: Clear, straightforward language that avoids jargon.
-        Goal: Connect with a wide audience by maintaining warmth and clarity.
-    - Professional:
-        Tone: Polished and precise.
-        Style: Concise, formal language with a focus on accuracy and authority.
-        Goal: Present information in a clear, well-organized manner.
-    - Creative:
-        Tone: Imaginative and expressive.
-        Style: Use vivid language, metaphors, and narrative elements.
-        Goal: Evoke emotions and create a memorable experience.
-    """
     mode_lower = mode.lower()
     if "balanced" in mode_lower:
         prompt = f"Rewrite the following text in a friendly and accessible tone, using clear and straightforward language that avoids jargon. The goal is to maintain warmth and clarity: {text}"
@@ -191,17 +152,13 @@ def apply_mode_formatting(text: str, mode: str) -> str:
     if response.status_code == 200:
         data = response.json()
         generated_text = data[0].get('generated_text', '')
-        # Remove prompt if present in output
         if prompt in generated_text:
             generated_text = generated_text.split(prompt)[-1].strip()
         return generated_text if generated_text else text
     return text
 
 def get_detection_scores(text: str) -> dict:
-    """
-    Returns fixed, exact detection scores (in percentage) from major AI detection services.
-    In a production environment, integrate with actual detector APIs.
-    """
+    # In a production system, you'd integrate with actual APIs.
     return {
         "GPTZero": 14.0,
         "Originality.AI": 19.0,
@@ -211,9 +168,6 @@ def get_detection_scores(text: str) -> dict:
     }
 
 def humanize_pipeline(original_text: str, mode: str) -> dict:
-    """
-    Process the text through all NLP steps, then apply correction and mode formatting.
-    """
     preprocessed = re.sub(r"[^\w\s]", "", original_text)
     paraphrased = paraphrase_text(original_text)
     styled = style_transfer_text(paraphrased)
@@ -225,14 +179,9 @@ def humanize_pipeline(original_text: str, mode: str) -> dict:
     mode_text = apply_mode_formatting(final_text, mode)
     detection_scores = get_detection_scores(mode_text)
     
+    # Return only the final output and detection scores
     return {
-        "preprocessed_text": preprocessed,
-        "paraphrased_text": paraphrased,
-        "style_transferred_text": styled,
-        "lexical_syntax_modified_text": lex_modified,
-        "fluency_enhanced_text": fluency_enhanced,
-        "sentiment_enhanced_text": sentiment_enhanced,
-        "optimized_text": mode_text,
+        "humanized_text": mode_text,
         "detection_scores": detection_scores
     }
 
@@ -474,12 +423,10 @@ HTML_TEMPLATE = """
         humanizeBtn.id = "humanize-btn";
         humanizeBtn.className = "humanize-button";
         humanizeBtn.textContent = "✨ Humanize";
-        // Append below the input section's stats
         inputText.parentElement.parentElement.appendChild(humanizeBtn);
       }
       const humanizeButton = document.getElementById('humanize-btn');
 
-      // Sample text for demonstration
       const sampleText = "This is an AI-generated response to your query about the benefits of exercise. Exercise has numerous health benefits including improved cardiovascular health, enhanced muscle strength, and better mental well-being.";
 
       trySampleButton.addEventListener('click', () => {
@@ -516,15 +463,15 @@ HTML_TEMPLATE = """
           });
           if (!response.ok) throw new Error("Error humanizing text");
           const result = await response.json();
-          // Directly set the output text (no letter-by-letter animation)
-          outputText.value = result.optimized_text || "No output received.";
+          // Directly set the output text
+          outputText.value = result.humanized_text || "No output received.";
           updateOutputWordCount();
           updateDetectionScores(result.detection_scores);
         } catch (err) {
           console.error(err);
           alert("There was an error processing your request.");
         }
-        humanizeButton.textContent = "✨ Humanize";
+        humanizeButton.textContent = "Humanize";
         humanizeButton.disabled = false;
       });
 
@@ -565,7 +512,6 @@ HTML_TEMPLATE = """
 """
 
 # --- Routes ---
-
 @app.route("/")
 def index():
     return render_template_string(HTML_TEMPLATE)
