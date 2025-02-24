@@ -1,7 +1,8 @@
-Flask
-requests
-spacy
 en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.5.0/en_core_web_sm-3.5.0.tar.gz
-nltk
-language_tool_python
-gunicorn
+Flask==2.2.5
+spacy==3.5.2
+nltk==3.8.1
+requests==2.31.0
+language_tool_python==2.7.0
+gunicorn==20.1.0
+numpy==1.23.5
