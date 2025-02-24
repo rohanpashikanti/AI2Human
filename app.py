@@ -496,7 +496,7 @@ HTML_TEMPLATE = """
           updateDetectionScores(result.detection_scores);
         } catch (err) {
           console.error(err);
-          print("There was an error processing your request.");
+          alert("There was an error processing your request.");
         }
         humanizeButton.textContent = "Humanize";
         humanizeButton.disabled = false;
