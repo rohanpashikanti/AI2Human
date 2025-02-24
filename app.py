@@ -431,7 +431,7 @@ HTML_TEMPLATE = """
       </div>
     </div>
     <footer>
-      Project by <a href="https://rohanpashikanti.vercel.app/" target="_blank">Rohan Pashilkanti</a>
+      Project by <a href="https://rohanpashikanti.vercel.app/" target="_blank">Rohan Pashikanti</a>
     </footer>
   </div>
   <script>
